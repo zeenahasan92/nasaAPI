@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <title>from nasa</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+    <style>
+        .bag {
+            background-color: rgba(255, 255, 255, 0);
+            color: whitesmoke;
+        }
+    </style>
+</head>
+<body style="background-image: url('1.jpg') ">
+
+
+
+<div id="root">
+    <h3></h3>
+    <div class="container ">
+        <div class="row">
+            <div v-for="(image,index) in images" class="col-12 col-md-4 mt-5">
+                <div class="card bg-light ">
+
+                    <div style="height: 200px;overflow: hidden">
+                        <img class="card-img-top  " :src="image.url" alt="reload plz">
+
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                        <h5>{{image.title}}</h5>
+
+                        {{image.explanation.substring(0, 100)}}
+                        <span class="collapse multi-collapse" :id="'text-' + index">{{image.explanation.substring(101, image.explanation.length - 1)}}</span>
+                        <a @click="toggleDone(index)"
+                           data-toggle="collapse"
+                           :data-target="'#text-' + index" aria-expanded="false"
+                           aria-controls="multiCollapseExample2" onclick="changeText(this)" style="color: #3a7ead"> ..
+                            Read More
+                        </a>
+                        <div class="row float-right mt-5">
+                            {{image.date}}
+                        </div>
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+<script>
+    var app = new Vue({
+        el: "#root",
+        data: {
+            images: []
+        },
+        methods: {
+            toggleDone: function (index) {
+                this.images[index].readMore = !this.images[index].readMore;
+            }
+
+
+        }
+    });
+
+
+    axios.get('https://api.nasa.gov/planetary/apod?api_key=16C7Yk6RNghgMeUBJulMgttxbZygEIEnnpz3mmte&count=10').then(function (response) {
+        console.log(response);
+
+        for (i = 0; i < 9; i++) {
+            response.data[i].readMore = true;
+            app.images.push(response.data[i]);
+
+        }
+    });
+
+    function changeText(sender) {
+        console.log(sender.innerText)
+        if (sender.innerText == ".. Read More") {
+            sender.innerText = "Read Less"
+        } else {
+            sender.innerText = ".. Read More"
+
+        }
+    }
+</script>
+</body>
+</html>
